@@ -1,7 +1,7 @@
-let input = document.getElementById('input');
-let output = document.getElementById('output');
 let message;
-let morseDictionary = {
+const input = document.getElementById('input');
+const output = document.getElementById('output');
+const morseDictionary = {
   'a': '.-',
   'b': '-...',
   'c': '-.-.',
@@ -15,7 +15,7 @@ let morseDictionary = {
   'k': '-.-',
   'l': '.-..',
   'm': '--',
-  'n': '_.',
+  'n': '-.',
   'o': '---',
   'p': '.--.',
   'q': '--.-',
@@ -31,43 +31,57 @@ let morseDictionary = {
 };
 
 
+input.addEventListener("keypress", pressEnter);
+
+function pressEnter(e) {
+  const isEnter = e.keyCode === 13;
+  if (isEnter) {
+    translate();
+    resetInput();
+  }
+}
+
 function translate() {
-	message = input.value;
-	if (message[0] === '-' || message[0] === '.') {
-	  decrypt(message);
-	} else {
-	  encrypt(message);
-	}
+  message = getInputValue();
+  const isMorse = message[0] === '-' || message[0] === '.';
+  if (isMorse) {
+    output.value = decrypt(message);
+  } else {
+    output.value = encrypt(message);
+  }
 }
 
 function encrypt(str) {
-	let encryption = [];
-	str = str.split('');
-	for (i = 0; i < str.length; i++) {
-		for (let key in morseDictionary) {
-			if (key === str[i])
-			encryption.push(morseDictionary[key]);
-		}
-	}
-	output.value = encryption.join(' ');
+  const encryption = [];
+  str = str.toLowerCase();
+  for (i = 0; i < str.length; i++) {
+    const morseValue = morseDictionary[str[i]];
+    if (!morseValue) {
+      alert('Wrong Morse value!');
+      return;
+    }
+    encryption.push(morseValue);
+  }
+  return encryption.join(' ');
 }
 
 function decrypt(str) {
-	let decryption = [];
-	str = str.split(' ');
-	for (i = 0; i < str.length; i++) {
-		for (let key in morseDictionary) {
-			if (morseDictionary[key] === str[i])
-			decryption.push(key);
-		}
-	}
-	output.value = decryption.join('');
+  const decryption = [];
+  str = str.split(' ');
+  for (i = 0; i < str.length; i++) {
+    for (let key in morseDictionary) {
+      if (str[i] === morseDictionary[key]) {
+        decryption.push(key);
+      }
+    }
+  }
+  return decryption.join('');
 }
 
+function resetInput() {
+  input.value = '';
+}
 
-input.onkeypress = function(e) {
-  if (e.keyCode === 13) {
-	translate();
-	input.value = '';
-  }
-};
+function getInputValue() {
+  return input.value;
+}
