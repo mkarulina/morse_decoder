@@ -28,6 +28,7 @@ const morseDictionary = {
   'x': '-..-',
   'y': '-.--',
   'z': '--..',
+  ' ': ' ', // added space for words/letters input
 };
 
 
@@ -42,13 +43,22 @@ function pressEnter(e) {
 }
 
 function translate() {
-  message = getInputValue();
-  const isMorse = message[0] === '-' || message[0] === '.';
-  if (isMorse) {
+  const message = getInputValue();
+  if (isMorse(message)) {
     output.value = decrypt(message);
   } else {
     output.value = encrypt(message);
   }
+}
+
+function isMorse(message){
+  for (let i = 0, max = message.length; i < max; i++){
+    const char = message[i];
+    if (char !== '-' && char !== '.' && char !== ' '){
+      return false;
+    }
+  }
+  return true;
 }
 
 function encrypt(str) {
